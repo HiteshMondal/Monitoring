@@ -900,8 +900,6 @@ du -sh *_data
 docker-compose pull
 docker-compose up -d
 
-# Backup data
-./backup.sh
 
 # Review and update alert rules
 vim prometheus/alerts/custom_alerts.yml
@@ -909,101 +907,6 @@ vim prometheus/alerts/custom_alerts.yml
 # Check for security updates
 docker-compose images
 ```
-
-### Backup Script
-
-Create `backup.sh`:
-
-```bash
-#!/bin/bash
-set -e
-
-BACKUP_DIR="/backup/monitoring/$(date +%Y%m%d_%H%M%S)"
-mkdir -p "$BACKUP_DIR"
-
-echo "Starting backup to $BACKUP_DIR"
-
-# Backup Prometheus data
-echo "Backing up Prometheus..."
-docker run --rm \
-  -v monitoring-stack_prometheus_data:/data:ro \
-  -v "$BACKUP_DIR":/backup \
-  alpine tar czf /backup/prometheus.tar.gz /data
-
-# Backup Grafana data
-echo "Backing up Grafana..."
-docker run --rm \
-  -v monitoring-stack_grafana_data:/data:ro \
-  -v "$BACKUP_DIR":/backup \
-  alpine tar czf /backup/grafana.tar.gz /data
-
-# Backup AlertManager data
-echo "Backing up AlertManager..."
-docker run --rm \
-  -v monitoring-stack_alertmanager_data:/data:ro \
-  -v "$BACKUP_DIR":/backup \
-  alpine tar czf /backup/alertmanager.tar.gz /data
-
-# Backup configurations
-echo "Backing up configurations..."
-tar czf "$BACKUP_DIR/configs.tar.gz" \
-  prometheus/ grafana/ alertmanager/ blackbox/ \
-  docker-compose.yml .env
-
-echo "Backup completed: $BACKUP_DIR"
-ls -lh "$BACKUP_DIR"
-```
-
-Make executable and run:
-```bash
-chmod +x backup.sh
-./backup.sh
-```
-
-### Restore Script
-
-Create `restore.sh`:
-
-```bash
-#!/bin/bash
-set -e
-
-BACKUP_DIR=$1
-
-if [ -z "$BACKUP_DIR" ]; then
-  echo "Usage: ./restore.sh /path/to/backup"
-  exit 1
-fi
-
-echo "Restoring from $BACKUP_DIR"
-
-# Stop services
-docker-compose down
-
-# Restore Prometheus
-echo "Restoring Prometheus..."
-docker run --rm \
-  -v monitoring-stack_prometheus_data:/data \
-  -v "$BACKUP_DIR":/backup \
-  alpine sh -c "cd / && tar xzf /backup/prometheus.tar.gz"
-
-# Restore Grafana
-echo "Restoring Grafana..."
-docker run --rm \
-  -v monitoring-stack_grafana_data:/data \
-  -v "$BACKUP_DIR":/backup \
-  alpine sh -c "cd / && tar xzf /backup/grafana.tar.gz"
-
-# Restore AlertManager
-echo "Restoring AlertManager..."
-docker run --rm \
-  -v monitoring-stack_alertmanager_data:/data \
-  -v "$BACKUP_DIR":/backup \
-  alpine sh -c "cd / && tar xzf /backup/alertmanager.tar.gz"
-
-# Restore configurations
-echo "Restoring configurations..."
-tar xzf "$BACKUP_DIR/configs.tar.gz"
 
 # Start services
 docker-compose up -d
@@ -1056,6 +959,7 @@ rm -rf *_data
 
 ## 🆘 Getting Help
 
+
 If you encounter issues:
 
 1. **Check the logs**: `docker-compose logs [service-name]`
@@ -1074,19 +978,6 @@ If you encounter issues:
 This project is licensed under the MIT License.
 
 ---
-
-## 🎯 Next Steps
-
-After successful setup:
-
-1. ✅ Configure notification channels (Slack, Email, PagerDuty)
-2. ✅ Import community dashboards from Grafana.com
-3. ✅ Add your application metrics endpoints
-4. ✅ Customize alert rules for your use case
-5. ✅ Set up regular backups
-6. ✅ Implement TLS/HTTPS for production
-7. ✅ Configure user authentication and RBAC
-8. ✅ Integrate with your CI/CD pipeline
 
 ---
 
