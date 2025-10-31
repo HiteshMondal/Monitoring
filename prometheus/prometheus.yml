@@ -44,7 +44,7 @@ scrape_configs:
   # cAdvisor - Container Metrics
   - job_name: 'cadvisor'
     static_configs:
-      - targets: ['cadvisor:8080']
+      - targets: ['cadvisor:8000']
         labels:
           instance: 'docker-host'
 
