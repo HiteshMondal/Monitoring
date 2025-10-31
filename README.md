@@ -164,7 +164,7 @@ docker compose down -v
 **Hitesh Mondal**
 Full Stack Developer | DevOps & Cloud Enthusiast
 📍 Barrackpore, West Bengal
-🔗 GitHub: [@hiteshmondal01](https://github.com/HiteshMondal)
+🔗 GitHub: [@HiteshMondal](https://github.com/HiteshMondal)
 
 ---
 

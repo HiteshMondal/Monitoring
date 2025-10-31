@@ -1,34 +1,49 @@
-version: '3.8'
-
 services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
+    restart: always
+    ports:
+      - "9091:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    networks:
-      - monitoring
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
 
-  node_exporter:
-    image: prom/node-exporter:latest
-    container_name: node_exporter
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    restart: always
     ports:
-      - "9100:9100"
-    networks:
-      - monitoring
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/config.yml:/etc/alertmanager/config.yml
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    restart: always
     ports:
-      - "3000:3000"
-    networks:
-      - monitoring
-    depends_on:
-      - prometheus
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
 
-networks:
-  monitoring:
-    driver: bridge
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    restart: always
+    ports:
+      - "9101:9100"
+
+volumes:
+  prometheus_data:
+  grafana_data:
