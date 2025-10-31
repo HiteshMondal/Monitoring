@@ -3,3 +3,6 @@ prometheus_data/
 prometheus/*.db
 grafana_data/
 *.log
+
+#Environment files
+.env
