@@ -1,9 +1,3 @@
-Here’s a **complete `README.md`** for a **Prometheus + Grafana monitoring setup project**, including configuration, setup, and running steps for both **Docker Compose** and **manual setup** options.
-You can use this as your project’s documentation file.
-
----
-
-
 # 🚀 Prometheus + Grafana Monitoring Stack
 
 This project sets up a **complete monitoring and visualization stack** using **Prometheus** and **Grafana**.  
@@ -15,17 +9,19 @@ Prometheus collects and stores metrics, while Grafana visualizes them through cu
 
 ```
 
-monitoring/
+monitoring-stack/
+├── docker-compose.yml (main orchestration)
 ├── prometheus/
-│   ├── prometheus.yml
+│   ├── prometheus.yml (scrape configs)
+│   ├── alerts/ (alert rules)
+│   └── rules/ (recording rules)
 ├── grafana/
-│   ├── provisioning/
-│   │   ├── dashboards/
-│   │   └── datasources/
+│   ├── provisioning/ (auto-config)
 │   └── dashboards/
-│       └── system-metrics.json
-├── docker-compose.yml
-└── README.md
+├── alertmanager/
+│   └── alertmanager.yml (notification routing)
+└── blackbox/
+    └── blackbox.yml (probe configs)
 
 ````
 

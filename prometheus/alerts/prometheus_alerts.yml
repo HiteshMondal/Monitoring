@@ -1,0 +1,46 @@
+# File: prometheus/alerts/prometheus_alerts.yml
+# Prometheus Self-Monitoring Alerts
+
+groups:
+  - name: prometheus_alerts
+    interval: 30s
+    rules:
+      - alert: PrometheusConfigurationReloadFailure
+        expr: prometheus_config_last_reload_successful != 1
+        for: 5m
+        labels:
+          severity: critical
+          category: prometheus
+        annotations:
+          summary: "Prometheus configuration reload failure (instance {{ $labels.instance }})"
+          description: "Prometheus configuration reload error\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+      - alert: PrometheusTooManyRestarts
+        expr: changes(process_start_time_seconds{job=~"prometheus|pushgateway|alertmanager"}[15m]) > 2
+        for: 5m
+        labels:
+          severity: warning
+          category: prometheus
+        annotations:
+          summary: "Prometheus too many restarts (instance {{ $labels.instance }})"
+          description: "Prometheus has restarted more than twice in the last 15 minutes\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+      - alert: PrometheusAlertmanagerConfigurationReloadFailure
+        expr: alertmanager_config_last_reload_successful != 1
+        for: 5m
+        labels:
+          severity: critical
+          category: alertmanager
+        annotations:
+          summary: "Alertmanager configuration reload failure (instance {{ $labels.instance }})"
+          description: "AlertManager configuration reload error\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+      - alert: PrometheusTargetMissing
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: critical
+          category: prometheus
+        annotations:
+          summary: "Prometheus target missing (instance {{ $labels.instance }})"
+          description: "A Prometheus target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
