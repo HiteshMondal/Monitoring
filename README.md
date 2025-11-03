@@ -125,6 +125,21 @@ docker run --rm -v monitoring-stack_prometheus_data:/data \
 - **Prometheus**: Target down, Config reload failed
 - **Endpoint**: HTTP service unavailable
 
+## 🖥️ 3️⃣ Import Ready-Made Dashboards
+To import:
+In Grafana sidebar → Dashboards → Import
+Enter an ID (like 1860) → Load
+Choose the Prometheus data source → Import
+Now you’ll see live graphs.
+
+| Exporter          | Dashboard ID | Description                                       |
+| ----------------- | ------------ | ------------------------------------------------- |
+| Node Exporter     | **1860**     | Linux system metrics (CPU, memory, disk, network) |
+| cAdvisor          | **14282**    | Docker container performance                      |
+| Blackbox Exporter | **7587**     | Endpoint uptime & probe latency                   |
+| Prometheus        | **3662**     | Prometheus itself                                 |
+| Pushgateway       | **12900**    | Track pushed metrics                              |
+
 ## 🔍 Troubleshooting
 
 **Services not starting?**
