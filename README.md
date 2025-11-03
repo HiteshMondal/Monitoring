@@ -68,7 +68,7 @@ Edit `prometheus/prometheus.yml`:
 scrape_configs:
   - job_name: 'my-app'
     static_configs:
-      - targets: ['app:8080']
+      - targets: ['app:8000']
 ```
 
 ### Configure Alerts

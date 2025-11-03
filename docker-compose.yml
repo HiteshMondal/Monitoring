@@ -47,8 +47,8 @@ services:
       - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-clock-panel
       - GF_SECURITY_DISABLE_GRAVATAR=true
       - GF_AUTH_ANONYMOUS_ENABLED=false
-      - GF_ALERTING_ENABLED=true
-      - GF_UNIFIED_ALERTING_ENABLED=true
+      - GF_ALERTING_ENABLED=false        # ← disable legacy alerting
+      - GF_UNIFIED_ALERTING_ENABLED=true # ← keep unified alerting
       - GF_LOG_LEVEL=info
     ports:
       - "3000:3000"
@@ -111,22 +111,18 @@ services:
 
   # cAdvisor - Container Metrics
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.47.2
     container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
     restart: unless-stopped
-    privileged: true
     ports:
-      - "8080:8080"
+      - "8000:8000"
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
       - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    devices:
-      - /dev/kmsg
     networks:
       - monitoring
+
 
   # Pushgateway - Batch Job Metrics
   pushgateway:
